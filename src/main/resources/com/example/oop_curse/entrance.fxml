@@ -10,7 +10,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="426.0" prefWidth="394.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.oop_curse.EntranceController">
    <children>
-      <Slider fx:id="elevator" blockIncrement="1.0" layoutX="338.0" layoutY="37.0" majorTickUnit="1.0" max="9.0" min="1.0" minorTickCount="0" orientation="VERTICAL" prefHeight="373.0" prefWidth="34.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0">
+      <Slider fx:id="elevatorImage" blockIncrement="1.0" layoutX="338.0" layoutY="37.0" majorTickUnit="1.0" max="9.0" min="1.0" minorTickCount="0" orientation="VERTICAL" prefHeight="373.0" prefWidth="34.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0">
          <cursor>
             <Cursor fx:constant="MOVE" />
          </cursor>

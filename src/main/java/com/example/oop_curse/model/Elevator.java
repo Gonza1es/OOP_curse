@@ -10,12 +10,15 @@ public class Elevator {
 
     private State state;
 
+    private Integer currentFloor;
+
     private final Queue<FloorRequest> routeQueue = new PriorityQueue<>();
 
-    public Elevator(Integer CAPACITY, Integer filling, State state) {
+    public Elevator(Integer CAPACITY, Integer filling, State state, Integer currentFloor) {
         this.CAPACITY = CAPACITY;
         this.filling = filling;
         this.state = state;
+        this.currentFloor = currentFloor;
     }
 
     public void setState() {
@@ -29,7 +32,56 @@ public class Elevator {
         routeQueue.add(request);
     }
 
+    public FloorRequest moveToNextFloor() {
+        setState();
+        if (!routeQueue.isEmpty()) {
+            FloorRequest request = routeQueue.peek();
+            if (!filling.equals(CAPACITY)) {
+                int time = Math.abs(request.floorNumber() - currentFloor);
+                try {
+                    Thread.sleep(time * 1000L);
+                    currentFloor = request.floorNumber();
+                    setState();
+                    filling -= request.passengersCount();
+                    routeQueue.poll();
+                    return request;
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return null;
+    }
+
     public void addAllRequests(List<FloorRequest> floorRequests) {
         routeQueue.addAll(floorRequests);
+    }
+
+    public Integer getCAPACITY() {
+        return CAPACITY;
+    }
+
+    public Integer getFilling() {
+        return filling;
+    }
+
+    public void setFilling(Integer filling) {
+        this.filling = filling;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public Queue<FloorRequest> getRouteQueue() {
+        return routeQueue;
+    }
+
+    public Integer getCurrentFloor() {
+        return currentFloor;
+    }
+
+    public void setCurrentFloor(Integer currentFloor) {
+        this.currentFloor = currentFloor;
     }
 }
