@@ -9,9 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ElevatorController {
 
@@ -74,7 +73,6 @@ public class ElevatorController {
         floor9.setOnAction(actionEvent -> buttonClick(floor9, passengersCountForFloor9, requestList));
 
         moveButton.setOnAction(actionEvent -> {
-            Collections.sort(requestList);
             elevatorService.addAllRequests(requestList);
             Stage stage = (Stage) moveButton.getScene().getWindow();
             stage.close();
@@ -84,9 +82,8 @@ public class ElevatorController {
     private boolean validatePayload(TextField passengersCountForFloor) {
         Integer passengersCount = Integer.parseInt(passengersCountForFloor.getText());
         return passengersCountForFloor.getText().isBlank()
-                || passengersCount >= elevatorService.getCapacity() - elevatorService.getFilling()
-                || passengersCount > elevatorService.getCapacity()
-                || passengersCount > currentFloor.floorNumber();
+                || passengersCount > elevatorService.getFilling()
+                || passengersCount > elevatorService.getCapacity();
 
     }
 
@@ -95,7 +92,7 @@ public class ElevatorController {
             showAlert("Вы уже находитесь на этом этаже");
             return null;
         }
-        return new FloorRequest(floorNumber, passengerCount, route);
+        return new FloorRequest(floorNumber, passengerCount, route, true);
     }
 
     private void buttonClick(Button floor, TextField passengersCount, List<FloorRequest> requestList) {
@@ -104,7 +101,7 @@ public class ElevatorController {
         } else {
             Integer passengerCountForFloor = Integer.parseInt(passengersCount.getText());
             Integer floorNumber = Integer.parseInt(floor.getText());
-            Route route = elevatorService.getCurrentFloor() > floorNumber
+            Route route = elevatorService.getCurrentFloor() < floorNumber
                     ? Route.UP
                     : Route.DOWN;
             FloorRequest floorRequest = createFloorRequest(floorNumber,

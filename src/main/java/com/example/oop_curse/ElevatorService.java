@@ -12,6 +12,8 @@ public interface ElevatorService {
 
     Integer getFilling();
 
+    void setFilling(Integer filling);
+
     void setState();
 
     void callElevator(FloorRequest floorRequest);

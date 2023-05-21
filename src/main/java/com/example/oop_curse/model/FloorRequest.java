@@ -1,6 +1,6 @@
 package com.example.oop_curse.model;
 
-public record FloorRequest(Integer floorNumber, Integer passengersCount, Route route) implements Comparable<FloorRequest>{
+public record FloorRequest(Integer floorNumber, Integer passengersCount, Route route, Boolean isDelivery) implements Comparable<FloorRequest>{
 
 
     @Override

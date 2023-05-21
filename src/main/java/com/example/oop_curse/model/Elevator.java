@@ -12,7 +12,7 @@ public class Elevator {
 
     private Integer currentFloor;
 
-    private final Queue<FloorRequest> routeQueue = new PriorityQueue<>();
+    private final Queue<FloorRequest> routeQueue = new LinkedList<>();
 
     public Elevator(Integer CAPACITY, Integer filling, State state, Integer currentFloor) {
         this.CAPACITY = CAPACITY;
@@ -36,20 +36,20 @@ public class Elevator {
         setState();
         if (!routeQueue.isEmpty()) {
             FloorRequest request = routeQueue.peek();
-            if (!filling.equals(CAPACITY)) {
-                int time = Math.abs(request.floorNumber() - currentFloor);
-                try {
-                    Thread.sleep(time * 1000L);
-                    currentFloor = request.floorNumber();
-                    setState();
+            int time = Math.abs(request.floorNumber() - currentFloor);
+            try {
+                Thread.sleep(time * 1000L);
+                this.currentFloor = request.floorNumber();
+                setState();
+                if (filling != 0)
                     filling -= request.passengersCount();
-                    routeQueue.poll();
-                    return request;
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                routeQueue.poll();
+                return request;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
+
         return null;
     }
 

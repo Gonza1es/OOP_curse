@@ -47,33 +47,43 @@ public class EntranceController {
             String passengers = passengersCount.getText();
             Route route = Route.valueOfLabel(directionOfTravel.getValue());
             if (!showAlert(floorNumber, passengers, route)) {
-                FloorRequest floorRequest = new FloorRequest(Integer.parseInt(floorNumber), Integer.parseInt(passengers), route);
-                elevatorService.callElevator(floorRequest);
-                currentFloor.set(elevatorService.waitElevator(floorRequest));
-                if (currentFloor.get() != null) {
-                    elevatorImage.adjustValue(currentFloor.get().floorNumber());
-                    elevatorService.setState();
+                FloorRequest floorRequest = new FloorRequest(Integer.parseInt(floorNumber), Integer.parseInt(passengers), route, false);
+                if (floorRequest.floorNumber().equals(elevatorService.getCurrentFloor())) {
+                    elevatorService.setFilling(floorRequest.passengersCount());
+                    elevatorComing(floorRequest);
+                } else {
+                    elevatorService.callElevator(floorRequest);
+                    currentFloor.set(elevatorService.waitElevator(floorRequest));
+                    if (currentFloor.get() != null) {
+                        elevatorImage.adjustValue(currentFloor.get().floorNumber());
+                    }
                 }
             }
         });
         elevatorImage.valueProperty().addListener((observableValue, number, t1) -> {
-            if (currentFloor.get().floorNumber().equals(elevatorService.getCurrentFloor())) {
-                try {
-                    showElevatorScene(currentFloor.get());
-                    delivery();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            if (currentFloor.get() != null)
+                elevatorComing(currentFloor.get());
         });
+    }
+
+    private void elevatorComing(FloorRequest currentFloor) {
+        if (currentFloor.floorNumber().equals(elevatorService.getCurrentFloor())) {
+            try {
+                showElevatorScene(currentFloor);
+                delivery();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void delivery() {
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                while (hasNext)
+                do {
                     updateUI();
+                } while (hasNext);
                 return null;
             }
         };
@@ -83,8 +93,10 @@ public class EntranceController {
 
     private void updateUI() {
         FloorRequest request = elevatorService.delivery();
-        if (request != null)
+        if (request != null) {
             this.elevatorImage.setValue(request.floorNumber());
+            hasNext = true;
+        }
         else hasNext = false;
     }
 
